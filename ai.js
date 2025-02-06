@@ -14,7 +14,7 @@ const genAI = new GoogleGenerativeAI(googleAPIKey);
 
 // Modelo da  API
 const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-2.0-flash",
     safetySettings: safetySetting,
 });
 
@@ -44,8 +44,6 @@ const chatHistory = new Map();
 
 client.on("messageCreate", async (message) => {
     try {
-
-        if (message.author.bot || (message.channel.id !== idCanal || idCanal1)) return;
 
         if (message.author.bot || (message.channel.id !== idCanal && message.channel.id !== idCanal1)) return;
         if (!chatHistory.has(message.channel.id)) {
@@ -87,4 +85,3 @@ process.on('uncaughtExceptionMonitor', (err, origin) => {
     console.error('[ Event Error: uncaughtExceptionMonitor ]', err, origin);
 });
 
-module.exports = client
