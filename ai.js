@@ -14,7 +14,7 @@ const genAI = new GoogleGenerativeAI(googleAPIKey);
 
 // Modelo da  API
 const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash",
+    model: "gemini-2.5-flash-preview-05-20",
     safetySettings: safetySetting,
 });
 
@@ -57,7 +57,7 @@ client.on("messageCreate", async (message) => {
 
 
         // Gera resposta com o prompt e histórico de contexto
-        const promptPersonalizado = `Responda à mensagem '${message.cleanContent}' com tom casual, Lembresse o Usuário que falou comigo é ${nameAut},como se fosse a Miku Nakano.`;
+        const promptPersonalizado = `Responda à mensagem '${message.cleanContent}',responda de forma simples e direta, o Usuário que falou com você é ${nameAut}, aja como Miku Nakano`;
 
         const result = await chat.sendMessage(promptPersonalizado);
         const responseText = result.response.text();
