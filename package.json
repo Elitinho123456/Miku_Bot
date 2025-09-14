@@ -22,7 +22,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "build": "npm install && npm update --all",
+    "start": "node index.js && clear"
   },
   "dependencies": {
     "@google/genai": "^1.19.0",

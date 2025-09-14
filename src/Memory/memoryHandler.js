@@ -1,7 +1,8 @@
 class MemoryHandler {
+    
     constructor(maxHistory = 20) {
         this.chatHistory = new Map();
-        this.userModels = new Map(); // Store user's preferred model
+        this.userModels = new Map();
         this.maxHistory = maxHistory;
     }
 

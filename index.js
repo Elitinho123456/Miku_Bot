@@ -18,14 +18,15 @@ const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.DirectMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildPresences,
     ],
     partials: [
         Partials.Channel,
-        Partials.GuildMember,
         Partials.Message,
+        Partials.User,
         Partials.Reaction,
     ]
 });
@@ -36,6 +37,7 @@ client.login(process.env.TOKEN);
 // Bot ready event
 client.on("clientReady", () => {
     console.log(`Logged in as ${client.user.tag}!`);
+    console.log(`Ready to take off!`);
     client.user.setPresence({
         activities: [{ name: 'Minecraft (Fake)', type: 'Playing' }],
         status: 'online',
@@ -48,7 +50,13 @@ client.on('messageCreate', async message => {
     // Ignore messages from bots
     if (message.author.bot) return;
 
+    // Check if message is in DMs or a guild channel
+    const isDM = message.channel.type === 'DM';
+    
+    // If it's a DM, create a channel-like ID using the user's ID
+    // This ensures DM conversations are separate from server conversations
     const userId = message.author.id;
+    const channelId = isDM ? `dm_${userId}` : message.channelId;
     const userInput = message.content.trim();
 
     // Check for commands
@@ -89,13 +97,13 @@ client.on('messageCreate', async message => {
     // Handle AI response
     try {
 
-        // Add user message to history
-        memoryHandler.addMessage(userId, 'user', userInput);
+        // Add user message to history (using channelId for both DMs and guild channels)
+        memoryHandler.addMessage(channelId, 'user', userInput);
         
-        // Get user's conversation history
-        const history = memoryHandler.getHistory(userId);
+        // Get conversation history for this channel/DM
+        const history = memoryHandler.getHistory(channelId);
         
-        // Get user's preferred model
+        // Get user's preferred model (using userId to maintain model preference across channels)
         const model = memoryHandler.getUserModel(userId);
         
         // Send typing indicator
@@ -106,8 +114,8 @@ client.on('messageCreate', async message => {
         
         if (aiResponse.success) {
 
-            // Add AI response to history
-            memoryHandler.addMessage(userId, 'assistant', aiResponse.response);
+            // Add AI response to history (using channelId for both DMs and guild channels)
+            memoryHandler.addMessage(channelId, 'assistant', aiResponse.response);
             
             // Split long messages to avoid Discord's 2000 character limit
             const maxLength = 1900;
@@ -149,6 +157,16 @@ async function handleModelCommand(message, model) {
     const userId = message.author.id;
     const availableModels = textGenerator.getAvailableModels();
     
+    // Check if user is in DMs
+    if (!message.guild) {
+        // In DMs, we can reply directly
+        if (!model || !availableModels.includes(model)) {
+            return message.reply(`Modelo inválido. Modelos disponíveis: ${availableModels.join(', ')}`);
+        }
+        memoryHandler.setUserModel(userId, model);
+        return message.reply(`✅ Modelo alterado para: ${model}`);
+    }
+    
     if (!model || !availableModels.includes(model)) {
         return message.reply(`Modelo inválido. Modelos disponíveis: ${availableModels.join(', ')}`);
     }
@@ -161,8 +179,10 @@ async function handleModelCommand(message, model) {
 async function handleClearCommand(message) {
 
     const userId = message.author.id;
+    const isDM = !message.guild;
+    const channelId = isDM ? `dm_${userId}` : message.channelId;
 
-    memoryHandler.clearHistory(userId);
+    memoryHandler.clearHistory(channelId);
     await message.reply('✅ Histórico de conversa limpo com sucesso!');
 
 }
@@ -202,5 +222,5 @@ async function showAvailableModels(message) {
         .setColor('#4CAF50');
         
     await message.reply({ embeds: [embed] });
-    
+
 }
