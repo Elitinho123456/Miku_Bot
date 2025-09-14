@@ -1,4 +1,4 @@
-const { HarmBlockThreshold, HarmCategory } = require("@google/generative-ai")
+import { HarmBlockThreshold, HarmCategory } from "@google/genai"
 
 const safetySetting = [
     {
@@ -19,4 +19,4 @@ const safetySetting = [
     },
 ];
 
-module.exports = safetySetting
+export default safetySetting;
