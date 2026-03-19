@@ -1,6 +1,6 @@
-import { HarmBlockThreshold, HarmCategory } from "@google/genai"
+import { HarmBlockThreshold, HarmCategory, SafetySetting } from "@google/genai";
 
-const safetySetting = [
+const safetySetting: SafetySetting[] = [
     {
         category: HarmCategory.HARM_CATEGORY_HARASSMENT,
         threshold: HarmBlockThreshold.BLOCK_NONE,

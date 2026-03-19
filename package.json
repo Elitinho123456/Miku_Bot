@@ -19,16 +19,22 @@
   "license": "ISC",
   "author": "Elitinho",
   "type": "module",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm install && npm update --all",
-    "start": "node index.js && clear"
+    "build": "tsc",
+    "start": "cls && tsx src/index.ts",
+    "dev": "tsx watch src/index.ts"
   },
   "dependencies": {
     "@google/genai": "^1.19.0",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.7"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.5.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
 }
